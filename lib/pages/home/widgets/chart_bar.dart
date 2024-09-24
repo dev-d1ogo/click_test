@@ -1,6 +1,6 @@
-import 'package:click_teste2/api/call_boot.dart';
+import 'package:click_teste2/functions/sendMessage.dart';
+import 'package:click_teste2/pages/chat/audio_page.dart';
 import 'package:click_teste2/pages/home/controller.dart';
-import 'package:click_teste2/types/api_response.dart';
 import 'package:click_teste2/types/message_type.dart';
 import 'package:flutter/material.dart';
 
@@ -16,10 +16,11 @@ class ChatBar extends StatefulWidget {
 class _ChatBarState extends State<ChatBar> {
   final TextEditingController _inputController = TextEditingController();
   String response = "";
+  bool hasText = false;
 
-  void setResponse(String message) {
+  void toggleStatus() {
     setState(() {
-      response = message;
+      hasText = !hasText;
     });
   }
 
@@ -49,8 +50,9 @@ class _ChatBarState extends State<ChatBar> {
                 controller: _inputController,
                 minLines: 1,
                 maxLines: null,
-                // onChanged: (value) =>
-                //     {print(value), widget.controller.text = value},
+                onChanged: (value) {
+                  widget.controller.changeText(_inputController.text);
+                },
                 decoration: const InputDecoration(
                   hintText: "Digite sua dúvida",
                   border: OutlineInputBorder(
@@ -65,11 +67,13 @@ class _ChatBarState extends State<ChatBar> {
               width: 12,
             ),
             _StartButton(widget: widget),
-            _SendButton(
-              widget: widget,
-              inputController: _inputController,
-              onMessageAdded: widget.controller.addItem,
-            )
+            _inputController.text.isNotEmpty
+                ? _SendButton(
+                    widget: widget,
+                    onMessageAdded: widget.controller.addItem,
+                    toggleStatus: toggleStatus,
+                  )
+                : _AudioButton()
           ],
         ),
       ),
@@ -77,15 +81,35 @@ class _ChatBarState extends State<ChatBar> {
   }
 }
 
-class _SendButton extends StatelessWidget {
-  final TextEditingController inputController;
-  final Function(MessageType) onMessageAdded;
+class _AudioButton extends StatelessWidget {
+  const _AudioButton({super.key});
 
-  const _SendButton(
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const AudioPage()));
+      },
+      icon: const Icon(Icons.headphones),
+      style: IconButton.styleFrom(
+          backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Colors.white),
+    );
+  }
+}
+
+class _SendButton extends StatelessWidget {
+  final Function(MessageType) onMessageAdded;
+  final Function() toggleStatus;
+
+  final controller = HomeController();
+
+  _SendButton(
       {super.key,
       required this.widget,
-      required this.inputController,
-      required this.onMessageAdded});
+      required this.onMessageAdded,
+      required this.toggleStatus});
 
   final ChatBar widget;
 
@@ -93,24 +117,7 @@ class _SendButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () async {
-        MessageType userMessage = MessageType(
-            message: widget.controller.text, type: MessageTypeEnum.message);
-        onMessageAdded(userMessage);
-
-        final message = widget.controller.text;
-
-        widget.controller.resetText();
-        inputController.clear();
-
-        final data = await widget.controller.callApi(message);
-
-        print("A data chegou aqui ${data.response}");
-        final responseMessage = data.response;
-
-        MessageType botMessage = MessageType(
-            message: responseMessage, type: MessageTypeEnum.response);
-
-        onMessageAdded(botMessage);
+        sendMessage(controller);
       },
       icon: const Icon(Icons.send),
       style: IconButton.styleFrom(
@@ -131,9 +138,12 @@ class _StartButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: widget.controller.isListening
-          ? widget.controller.stopListening
-          : widget.controller.startListening,
+      onPressed: () {
+        final call = widget.controller.isListening
+            ? widget.controller.stopListening
+            : widget.controller.startListening;
+        call();
+      },
       icon: !widget.controller.isListening
           ? const Icon(Icons.mic)
           : const Icon(Icons.mic_off),
