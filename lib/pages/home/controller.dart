@@ -11,15 +11,16 @@ class HomeController extends ChangeNotifier {
   static HomeController? _controller;
 
   String text = '';
-  bool isListening = false;
   List<MessageType> messageList = [];
+
+  bool isListening = false;
+  bool isLoading = false;
   bool enableToSpeech = false;
 
   late ListenService _serviceListen;
   final _serviceSpeak = SpeakService();
 
   void _onSpeechResult(result) async {
-    print(result);
     changeText(result.recognizedWords);
   }
 

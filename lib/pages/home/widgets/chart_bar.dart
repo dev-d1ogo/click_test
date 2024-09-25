@@ -37,6 +37,7 @@ class _ChatBarState extends State<ChatBar> {
 
   @override
   Widget build(BuildContext context) {
+    print("Esse é o valor do texto");
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Padding(
@@ -67,13 +68,13 @@ class _ChatBarState extends State<ChatBar> {
               width: 12,
             ),
             _StartButton(widget: widget),
-            _inputController.text.isNotEmpty
+            _inputController.text.isNotEmpty && widget.controller.text != ""
                 ? _SendButton(
                     widget: widget,
                     onMessageAdded: widget.controller.addItem,
                     toggleStatus: toggleStatus,
                   )
-                : _AudioButton()
+                : const _AudioButton()
           ],
         ),
       ),

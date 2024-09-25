@@ -1,6 +1,5 @@
 import 'package:click_teste2/pages/home/controller.dart';
 import 'package:click_teste2/types/message_type.dart';
-import 'package:flutter/material.dart';
 
 Future<void> sendMessage(HomeController controller) async {
   // Cria a mensagem do usuário
