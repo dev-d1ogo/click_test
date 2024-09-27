@@ -1,4 +1,3 @@
-import 'package:click_teste2/pages/home/home_page.dart';
 import 'package:click_teste2/pages/home/widgets/chat_buble.dart';
 import 'package:click_teste2/types/message_type.dart';
 import 'package:flutter/material.dart';

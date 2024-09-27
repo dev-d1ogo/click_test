@@ -1,37 +1,17 @@
+import 'package:click_teste2/controller/audio_base_controller.dart';
 import 'package:click_teste2/services/api/call_boot.dart';
 import 'package:click_teste2/services/listen/listen.service.dart';
 import 'package:click_teste2/services/speak/speak.service.dart';
+import 'package:click_teste2/types/api_response.dart';
 import 'package:click_teste2/types/message_type.dart';
-import 'package:flutter/material.dart';
 
-import '../../types/api_response.dart';
-// import 'package:flutter_tts/flutter_tts.dart';
-
-class HomeController extends ChangeNotifier {
+class HomeController extends BaseController {
   static HomeController? _controller;
 
-  String text = '';
   List<MessageType> messageList = [];
-
-  bool isListening = false;
-  bool isLoading = false;
-  bool enableToSpeech = false;
 
   late ListenService _serviceListen;
   final _serviceSpeak = SpeakService();
-
-  void _onSpeechResult(result) async {
-    changeText(result.recognizedWords);
-  }
-
-  Future<ApiResponse> callApi(String text) async {
-    ApiResponse data = await callBot(text);
-
-    _serviceSpeak.speak(data.response);
-
-    return data;
-  }
-  // Funcao para parar o ouvinte
 
   HomeController._();
 
@@ -40,7 +20,17 @@ class HomeController extends ChangeNotifier {
     return _controller!;
   }
 
-  initListner() {
+  void _onSpeechResult(result) async {
+    changeText(result.recognizedWords);
+  }
+
+  Future<ApiResponse> callApi(String text) async {
+    ApiResponse data = await callBot(text);
+    _serviceSpeak.speak(data.response);
+    return data;
+  }
+
+  void initListner() {
     _serviceListen = ListenService(
       onResult: _onSpeechResult,
       onStatus: (status) {
@@ -51,23 +41,21 @@ class HomeController extends ChangeNotifier {
     _serviceListen.init();
   }
 
-  speak(text) => _serviceSpeak.speak(text);
+  speak(String text) => _serviceSpeak.speak(text);
 
-  startListening() => _serviceListen.startListening();
-  stopListening() => _serviceListen.stopListening();
+  void startListening() {
+    _serviceListen.startListening();
+    isListening = true;
+  }
 
-  addItem(MessageType item) {
+  void stopListening() => _serviceListen.stopListening();
+
+  void initListeningWithLongPress() {
+    initListner();
+  }
+
+  void addItem(MessageType item) {
     messageList.add(item);
-    notifyListeners();
-  }
-
-  resetText() {
-    text = '';
-    notifyListeners();
-  }
-
-  changeText(String newValue) {
-    text = newValue;
     notifyListeners();
   }
 }
