@@ -30,7 +30,7 @@ class HomeController extends BaseController {
     return data;
   }
 
-  void initListner() {
+  void initListner() async {
     _serviceListen = ListenService(
       onResult: _onSpeechResult,
       onStatus: (status) {
@@ -38,14 +38,13 @@ class HomeController extends BaseController {
         notifyListeners();
       },
     );
-    _serviceListen.init();
+    enableToSpeech = await _serviceListen.init();
   }
 
   speak(String text) => _serviceSpeak.speak(text);
 
   void startListening() {
     _serviceListen.startListening();
-    isListening = true;
   }
 
   void stopListening() => _serviceListen.stopListening();

@@ -71,4 +71,10 @@ class _HomePageState extends State<HomePage> {
       ),
     ); // Cor de fundo para visualização;
   }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 }

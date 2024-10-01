@@ -9,18 +9,18 @@ class ListenService {
   ListenService({this.onStatus, this.onResult});
 
   void startListening() async {
+    await _speechToText.cancel();
     await _speechToText.listen(
       listenFor: const Duration(seconds: 6),
       onResult: onResult,
       localeId: "pt_BR",
     ); // A função listen espera receber uma callback para quando tiver o resultado da fala do plugin
-
-    print("Começou a  ouvir ${_speechToText.isListening}");
   }
 
-  void init() async {
-    await _speechToText.initialize(
-        onStatus: onStatus); //Retorna um boolean quando finalizar
+  Future<bool> init() async {
+    await _speechToText.cancel();
+    final enableToSpeech = await _speechToText.initialize(onStatus: onStatus);
+    return enableToSpeech;
   }
 
   void stopListening() async {

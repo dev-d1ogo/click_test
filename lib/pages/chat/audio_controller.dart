@@ -10,6 +10,8 @@ class AudioPageController extends BaseController {
   late ListenService _serviceListen;
   final _serviceSpeak = SpeakService();
 
+  late final String actualStatus;
+
   AudioPageController._();
 
   factory AudioPageController() {
@@ -32,17 +34,16 @@ class AudioPageController extends BaseController {
       onResult: _onSpeechResult,
       onStatus: (status) {
         isListening = status == "listening";
+        actualStatus = status;
         notifyListeners();
       },
     );
-    _serviceListen.init();
   }
 
   void speak(String text) => _serviceSpeak.speak(text);
 
   void startListening() {
     _serviceListen.startListening();
-    isListening = true;
   }
 
   void stopListening() => _serviceListen.stopListening();
@@ -51,8 +52,17 @@ class AudioPageController extends BaseController {
     initListner();
   }
 
+  void onPlay() {
+    togglePausedStatus();
+    startListening();
+  }
+
+  void onPause() {
+    togglePausedStatus();
+    stopListening();
+  }
+
   void togglePausedStatus() {
-    print("O status mudou");
     isPaused = !isPaused;
     notifyListeners();
   }

@@ -15,8 +15,8 @@ class _AudioPageState extends State<AudioPage> {
 
   @override
   void initState() {
-    super.initState();
     controller.initListner();
+    super.initState();
 
     // Future.delayed(Duration(seconds: 2), () {
     //   controller.startListening();
@@ -25,7 +25,6 @@ class _AudioPageState extends State<AudioPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(controller.isPaused);
     return Scaffold(
       appBar: AppBar(
         // backgroundColor: Colors.white,
@@ -34,34 +33,42 @@ class _AudioPageState extends State<AudioPage> {
           style: TextStyle(color: Theme.of(context).primaryColor),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: AnimatedBuilder(
+          animation: controller,
+          builder: (context, child) {
+            return Column(
               children: [
-                controller.isListening
-                    ? PressToTalkButton(
-                        startListening: controller.startListening,
-                      )
-                    : Container(
-                        width: 150,
-                        height: 150,
-                        color: Colors.red,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      controller.isListening
+                          ? PressToTalkButton(
+                              startListening: controller.startListening,
+                            )
+                          : Container(
+                              width: 150,
+                              height: 150,
+                              color: Colors.red,
+                            ),
+                      const SizedBox(
+                        height: 32,
                       ),
-                const SizedBox(
-                  height: 32,
+                      const Text(
+                        "Toque ou pressione para começar a falar",
+                        style: TextStyle(),
+                      )
+                    ],
+                  ),
                 ),
-                const Text(
-                  "Toque ou pressione para começar a falar",
-                  style: TextStyle(),
+                AudioControl(
+                  isPaused: controller.isPaused,
+                  onPause: controller.onPause,
+                  onPlay: controller.onPlay,
                 )
               ],
-            ),
-          ),
-          const AudioControl()
-        ],
-      ),
+            );
+          }),
     );
   }
 }
