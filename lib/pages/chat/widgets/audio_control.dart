@@ -1,32 +1,25 @@
-import 'package:click_teste2/pages/chat/audio_controller.dart';
+import 'package:click_teste2/controller/speech_to_text_controller.dart';
 import 'package:flutter/material.dart';
 
-class AudioControl extends StatefulWidget {
-  const AudioControl({super.key});
+class AudioControl extends StatelessWidget {
+  final SpeechToTextController controller;
 
-  @override
-  State<AudioControl> createState() => _AudioControlState();
-}
-
-class _AudioControlState extends State<AudioControl> {
-  final controller = AudioPageController();
+  const AudioControl({required this.controller, super.key});
 
   @override
   Widget build(BuildContext context) {
-    print("Esta pausado: ${controller.isPaused}");
-
-    // Retorne um widget apropriado com base no estado da sua aplicação
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          controller.isPaused
-              ? _PauseButton(pause: controller.togglePausedStatus)
+          controller.isPaused && controller.status_state == "notListening"
+              ? _PauseButton(pause: controller.pause)
               : _PlayButton(
-                  resume: controller.togglePausedStatus,
+                  resume: controller.resume,
                 ),
-          const _CancelButton(widget: AudioControl()),
+          Text(controller.status_state),
+          const _CancelButton(),
         ],
       ),
     );
@@ -53,18 +46,14 @@ class _PauseButton extends StatelessWidget {
   }
 }
 
-// As classes _CancelButton e _PlayButton devem ser definidas também
-// Assegure-se de que essas classes também retornem um Widget válido
-
 class _CancelButton extends StatelessWidget {
-  final AudioControl widget;
-  const _CancelButton({super.key, required this.widget});
+  const _CancelButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        // Implementar lógica de cancelar
+        Navigator.pop(context);
       },
       icon: const Icon(Icons.cancel),
       style: IconButton.styleFrom(
@@ -84,7 +73,7 @@ class _PlayButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        // Implementar lógica de reprodução
+        resume();
       },
       icon: const Icon(Icons.play_arrow),
       style: IconButton.styleFrom(

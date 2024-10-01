@@ -14,13 +14,12 @@ class ListenService {
       onResult: onResult,
       localeId: "pt_BR",
     ); // A função listen espera receber uma callback para quando tiver o resultado da fala do plugin
-
-    print("Começou a  ouvir ${_speechToText.isListening}");
   }
 
-  void init() async {
-    await _speechToText.initialize(
-        onStatus: onStatus); //Retorna um boolean quando finalizar
+  Future<bool> init() async {
+    final enableToSpeech = await _speechToText.initialize(onStatus: onStatus);
+
+    return enableToSpeech;
   }
 
   void stopListening() async {

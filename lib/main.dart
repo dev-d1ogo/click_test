@@ -1,13 +1,20 @@
+import 'package:click_teste2/controller/messages_controller.dart';
+import 'package:click_teste2/controller/speech_to_text_controller.dart';
 import 'package:click_teste2/pages/chat/audio_page.dart';
 import 'package:click_teste2/pages/home/home_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(
-      DevicePreview(
-        enabled: !kReleaseMode,
-        builder: (context) => const MyApp(), // Wrap your app
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => SpeechToTextController(),
+          ),
+          ChangeNotifierProvider(create: (context) => MessageController()),
+        ],
+        child: const MyApp(), // Wrap your app
       ),
     );
 

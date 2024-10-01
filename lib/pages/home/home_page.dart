@@ -1,6 +1,8 @@
-import 'package:click_teste2/pages/home/home_controller.dart';
+import 'package:click_teste2/controller/messages_controller.dart';
+import 'package:click_teste2/controller/speech_to_text_controller.dart';
 import 'package:click_teste2/pages/home/widgets/chat_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/chart_bar.dart';
 
@@ -12,12 +14,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final controller = HomeController();
-
   @override
   void initState() {
     super.initState();
-    controller.initListner();
   }
 
   @override
@@ -35,9 +34,8 @@ class _HomePageState extends State<HomePage> {
         height: MediaQuery.of(context).size.height,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: AnimatedBuilder(
-            animation: controller,
-            builder: (context, snapshot) {
+          child: Consumer<SpeechToTextController>(
+            builder: (context, controller, child) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -53,13 +51,9 @@ class _HomePageState extends State<HomePage> {
                     height: 30,
                     width: 150,
                     padding: const EdgeInsets.all(16),
-                    child: Text(controller.text),
+                    child: Text(controller.recognizedText),
                   ),
-                  Expanded(
-                      child: ChatPage(
-                    messageList: controller.messageList,
-                    onMessageAdded: controller.addItem,
-                  )),
+                  Expanded(child: ChatPage()),
                   ChatBar(
                     controller: controller,
                   ),

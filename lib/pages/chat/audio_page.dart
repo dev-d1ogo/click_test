@@ -1,6 +1,7 @@
-import 'package:click_teste2/pages/chat/audio_controller.dart';
+import 'package:click_teste2/controller/speech_to_text_controller.dart';
 import 'package:click_teste2/pages/chat/widgets/audio_control.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AudioPage extends StatefulWidget {
   const AudioPage({super.key});
@@ -11,56 +12,39 @@ class AudioPage extends StatefulWidget {
 }
 
 class _AudioPageState extends State<AudioPage> {
-  final controller = AudioPageController();
-
-  @override
-  void initState() {
-    super.initState();
-    controller.initListner();
-
-    // Future.delayed(Duration(seconds: 2), () {
-    //   controller.startListening();
-    // });
-  }
+  late SpeechToTextController controller;
 
   @override
   Widget build(BuildContext context) {
-    print(controller.isPaused);
+    // context.watch<SpeechToTextController>(); => Segunda maneira de acessar o contexto
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //  v
+    // });
+
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Colors.white,
         title: Text(
           "TIL",
           style: TextStyle(color: Theme.of(context).primaryColor),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        padding: const EdgeInsets.all(12),
+        child: Consumer<SpeechToTextController>(
+          builder: (context, controller, child) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                controller.isListening
-                    ? PressToTalkButton(
-                        startListening: controller.startListening,
-                      )
-                    : Container(
-                        width: 150,
-                        height: 150,
-                        color: Colors.red,
-                      ),
-                const SizedBox(
-                  height: 32,
-                ),
-                const Text(
-                  "Toque ou pressione para começar a falar",
-                  style: TextStyle(),
-                )
+                Text(controller.status == "listening"
+                    ? "Ta ouvindo"
+                    : "Nao ta ouvindo"),
+                AudioControl(controller: controller)
               ],
-            ),
-          ),
-          const AudioControl()
-        ],
+            );
+          },
+        ),
       ),
     );
   }

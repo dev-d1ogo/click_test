@@ -1,13 +1,11 @@
+import 'package:click_teste2/controller/messages_controller.dart';
 import 'package:click_teste2/pages/home/widgets/chat_buble.dart';
 import 'package:click_teste2/types/message_type.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
-  final List<MessageType> messageList;
-  final Function(MessageType) onMessageAdded;
-
-  const ChatPage(
-      {super.key, required this.messageList, required this.onMessageAdded});
+  const ChatPage({super.key});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -17,7 +15,12 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [Expanded(child: _buildMessageList(widget.messageList))],
+      children: [
+        Consumer<MessageController>(
+          builder: (context, controller, child) =>
+              _buildMessageList(controller.messageList),
+        )
+      ],
     );
   }
 

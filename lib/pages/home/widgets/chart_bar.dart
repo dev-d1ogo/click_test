@@ -1,6 +1,5 @@
 import 'package:click_teste2/functions/sendMessage.dart';
 import 'package:click_teste2/pages/chat/audio_page.dart';
-import 'package:click_teste2/pages/home/home_controller.dart';
 import 'package:click_teste2/types/message_type.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +36,6 @@ class _ChatBarState extends State<ChatBar> {
 
   @override
   Widget build(BuildContext context) {
-    print("Esse é o valor do texto");
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Padding(
