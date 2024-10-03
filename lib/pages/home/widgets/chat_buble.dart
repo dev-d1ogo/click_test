@@ -1,4 +1,4 @@
-import 'package:click_teste2/pages/home/home_controller.dart';
+import 'package:click_teste2/controller/controller.dart';
 import 'package:click_teste2/types/message_type.dart';
 import 'package:flutter/material.dart';
 
@@ -62,7 +62,7 @@ class AudioButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = HomeController();
+    final controller = Controller();
 
     return Container(
       decoration: const BoxDecoration(

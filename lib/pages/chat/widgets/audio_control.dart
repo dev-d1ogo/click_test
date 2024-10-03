@@ -1,32 +1,43 @@
-import 'package:click_teste2/pages/chat/audio_controller.dart';
 import 'package:flutter/material.dart';
 
 class AudioControl extends StatefulWidget {
-  const AudioControl({super.key});
+  const AudioControl(
+      {super.key,
+      required this.isPaused,
+      required this.onPlay,
+      required this.onPause,
+      required this.status,
+      required this.onStart,
+      required this.onCancel});
+
+  final bool isPaused;
+  final String status;
+  final VoidCallback onPlay;
+  final VoidCallback onPause;
+  final VoidCallback onStart;
+  final VoidCallback onCancel;
 
   @override
   State<AudioControl> createState() => _AudioControlState();
 }
 
 class _AudioControlState extends State<AudioControl> {
-  final controller = AudioPageController();
-
   @override
   Widget build(BuildContext context) {
-    print("Esta pausado: ${controller.isPaused}");
-
-    // Retorne um widget apropriado com base no estado da sua aplicação
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(32),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          controller.isPaused
-              ? _PauseButton(pause: controller.togglePausedStatus)
-              : _PlayButton(
-                  resume: controller.togglePausedStatus,
-                ),
-          const _CancelButton(widget: AudioControl()),
+          widget.status == 'initial' || widget.status == "done"
+              ? _InitialButton(start: widget.onStart)
+              : !widget.isPaused
+                  ? _PauseButton(pause: widget.onPause)
+                  : _PlayButton(
+                      resume: widget.onPlay,
+                    ),
+          Text(widget.status),
+          _CancelButton(),
         ],
       ),
     );
@@ -57,14 +68,11 @@ class _PauseButton extends StatelessWidget {
 // Assegure-se de que essas classes também retornem um Widget válido
 
 class _CancelButton extends StatelessWidget {
-  final AudioControl widget;
-  const _CancelButton({super.key, required this.widget});
-
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        // Implementar lógica de cancelar
+        Navigator.pop(context);
       },
       icon: const Icon(Icons.cancel),
       style: IconButton.styleFrom(
@@ -85,8 +93,29 @@ class _PlayButton extends StatelessWidget {
     return IconButton(
       onPressed: () {
         // Implementar lógica de reprodução
+        resume();
       },
       icon: const Icon(Icons.play_arrow),
+      style: IconButton.styleFrom(
+        iconSize: 42,
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+      ),
+    );
+  }
+}
+
+class _InitialButton extends StatelessWidget {
+  final VoidCallback start;
+  const _InitialButton({super.key, required this.start});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        start();
+      },
+      icon: const Icon(Icons.mic),
       style: IconButton.styleFrom(
         iconSize: 42,
         backgroundColor: Theme.of(context).primaryColor,

@@ -1,11 +1,11 @@
+import 'package:click_teste2/controller/controller.dart';
 import 'package:click_teste2/functions/sendMessage.dart';
 import 'package:click_teste2/pages/chat/audio_page.dart';
-import 'package:click_teste2/pages/home/home_controller.dart';
 import 'package:click_teste2/types/message_type.dart';
 import 'package:flutter/material.dart';
 
 class ChatBar extends StatefulWidget {
-  final HomeController controller;
+  final Controller controller;
 
   const ChatBar({super.key, required this.controller});
 
@@ -104,7 +104,7 @@ class _SendButton extends StatelessWidget {
   final Function(MessageType) onMessageAdded;
   final Function() toggleStatus;
 
-  final controller = HomeController();
+  final controller = Controller();
 
   _SendButton(
       {super.key,

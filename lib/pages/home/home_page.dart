@@ -1,4 +1,4 @@
-import 'package:click_teste2/pages/home/home_controller.dart';
+import 'package:click_teste2/controller/controller.dart';
 import 'package:click_teste2/pages/home/widgets/chat_page.dart';
 import 'package:flutter/material.dart';
 
@@ -12,12 +12,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final controller = HomeController();
+  final controller = Controller();
 
   @override
   void initState() {
     super.initState();
-    controller.initListner();
   }
 
   @override
@@ -70,5 +69,11 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     ); // Cor de fundo para visualização;
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 }

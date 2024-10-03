@@ -7,7 +7,8 @@
         {
             "name": "click_teste2",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "flutterMode": "debug"
         },
         {
             "name": "click_teste2 (profile mode)",

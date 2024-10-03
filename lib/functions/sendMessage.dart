@@ -1,7 +1,7 @@
-import 'package:click_teste2/pages/home/home_controller.dart';
+import 'package:click_teste2/controller/controller.dart';
 import 'package:click_teste2/types/message_type.dart';
 
-Future<void> sendMessage(HomeController controller) async {
+Future<void> sendMessage(Controller controller) async {
   // Cria a mensagem do usuário
   MessageType userMessage =
       MessageType(message: controller.text, type: MessageTypeEnum.message);

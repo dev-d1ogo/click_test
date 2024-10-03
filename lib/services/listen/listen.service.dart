@@ -4,24 +4,32 @@ import 'package:speech_to_text/speech_to_text.dart';
 class ListenService {
   final SpeechToText _speechToText = SpeechToText();
   void Function(String)? onStatus;
+  void Function(void)? onError;
   void Function(SpeechRecognitionResult)? onResult;
 
-  ListenService({this.onStatus, this.onResult});
+  ListenService({this.onStatus, this.onResult, this.onError});
 
-  void startListening() async {
+  Future<bool> startListening(void Function(String)? onStatus) async {
+    final enableToSpeech =
+        await _speechToText.initialize(onStatus: onStatus, onError: onError);
+
     await _speechToText.listen(
       listenFor: const Duration(seconds: 6),
       onResult: onResult,
       localeId: "pt_BR",
-    ); // A função listen espera receber uma callback para quando tiver o resultado da fala do plugin
+    );
 
-    print("Começou a  ouvir ${_speechToText.isListening}");
+    return enableToSpeech;
   }
 
-  void init() async {
-    await _speechToText.initialize(
-        onStatus: onStatus); //Retorna um boolean quando finalizar
+  void cancelListening() async {
+    await _speechToText.cancel();
   }
+
+  // Future<bool> init() async {
+  //   final enableToSpeech = await _speechToText.initialize(onStatus: onStatus);
+  //   return enableToSpeech;
+  // }
 
   void stopListening() async {
     await _speechToText.stop();
