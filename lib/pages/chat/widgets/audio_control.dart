@@ -29,7 +29,8 @@ class _AudioControlState extends State<AudioControl> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          widget.status == 'initial' || widget.status == "done"
+          (widget.status == 'initial' || widget.status == "done") &&
+                  !widget.isPaused
               ? _InitialButton(start: widget.onStart)
               : !widget.isPaused
                   ? _PauseButton(pause: widget.onPause)
@@ -64,9 +65,6 @@ class _PauseButton extends StatelessWidget {
   }
 }
 
-// As classes _CancelButton e _PlayButton devem ser definidas também
-// Assegure-se de que essas classes também retornem um Widget válido
-
 class _CancelButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -86,13 +84,12 @@ class _CancelButton extends StatelessWidget {
 
 class _PlayButton extends StatelessWidget {
   final VoidCallback resume;
-  const _PlayButton({super.key, required this.resume});
+  const _PlayButton({required this.resume});
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        // Implementar lógica de reprodução
         resume();
       },
       icon: const Icon(Icons.play_arrow),
@@ -107,7 +104,7 @@ class _PlayButton extends StatelessWidget {
 
 class _InitialButton extends StatelessWidget {
   final VoidCallback start;
-  const _InitialButton({super.key, required this.start});
+  const _InitialButton({required this.start});
 
   @override
   Widget build(BuildContext context) {

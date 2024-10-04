@@ -9,6 +9,7 @@ class Controller extends ChangeNotifier {
   static Controller? _controller;
   String text = '';
   bool isListening = false;
+  bool isSpeaking = false;
   bool isLoading = false;
   bool enableToSpeech = false;
   bool isPaused = false;
@@ -47,11 +48,15 @@ class Controller extends ChangeNotifier {
   void onPlay() {
     togglePausedStatus();
     startListening();
+
+    notifyListeners();
   }
 
   void onPause() {
     togglePausedStatus();
     stopListening();
+
+    notifyListeners();
   }
 
   void togglePausedStatus() {
@@ -73,7 +78,16 @@ class Controller extends ChangeNotifier {
     notifyListeners();
   }
 
-  speak(String text) => _serviceSpeak.speak(text);
+  speak(String text) {
+    isSpeaking = true;
+    _serviceSpeak.speak(text);
+    notifyListeners();
+  }
+
+  stopSpeak() {
+    isSpeaking = false;
+    notifyListeners();
+  }
 
   void startListening() async {
     isPaused = false;
@@ -96,7 +110,7 @@ class Controller extends ChangeNotifier {
   // }
 
   void changeText(String newValue) {
-    text = newValue;
+    text += newValue;
     notifyListeners();
   }
 

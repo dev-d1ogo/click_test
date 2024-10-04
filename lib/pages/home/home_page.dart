@@ -23,7 +23,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Colors.white,
         title: Text(
           "TIL",
           style: TextStyle(color: Theme.of(context).primaryColor),
@@ -45,7 +44,7 @@ class _HomePageState extends State<HomePage> {
                         ? "...Ouvindo"
                         : controller.enableToSpeech
                             ? "Toque no microfone para falar"
-                            : "Fala indisponível",
+                            : "Fala indisponível toque no microfone para ativar",
                     style: const TextStyle(fontSize: 20),
                   ),
                   Container(
@@ -55,10 +54,11 @@ class _HomePageState extends State<HomePage> {
                     child: Text(controller.text),
                   ),
                   Expanded(
-                      child: ChatPage(
-                    messageList: controller.messageList,
-                    onMessageAdded: controller.addItem,
-                  )),
+                    child: ChatPage(
+                      messageList: controller.messageList,
+                      onMessageAdded: controller.addItem,
+                    ),
+                  ),
                   ChatBar(
                     controller: controller,
                   ),
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-    ); // Cor de fundo para visualização;
+    );
   }
 
   @override

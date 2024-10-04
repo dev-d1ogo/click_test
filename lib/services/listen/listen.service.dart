@@ -10,6 +10,8 @@ class ListenService {
   ListenService({this.onStatus, this.onResult, this.onError});
 
   Future<bool> startListening(void Function(String)? onStatus) async {
+    await _speechToText.cancel();
+
     final enableToSpeech =
         await _speechToText.initialize(onStatus: onStatus, onError: onError);
 
@@ -33,7 +35,5 @@ class ListenService {
 
   void stopListening() async {
     await _speechToText.stop();
-
-    print("Parou de ouvir");
   }
 }

@@ -74,7 +74,7 @@ class _ChatBarState extends State<ChatBar> {
                     onMessageAdded: widget.controller.addItem,
                     toggleStatus: toggleStatus,
                   )
-                : const _AudioButton()
+                : _AudioButton(resetListen: widget.controller.stopListening)
           ],
         ),
       ),
@@ -83,7 +83,9 @@ class _ChatBarState extends State<ChatBar> {
 }
 
 class _AudioButton extends StatelessWidget {
-  const _AudioButton({super.key});
+  final void Function() resetListen;
+
+  const _AudioButton({super.key, required this.resetListen});
 
   @override
   Widget build(BuildContext context) {
