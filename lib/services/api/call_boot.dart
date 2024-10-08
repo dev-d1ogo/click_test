@@ -25,6 +25,7 @@ Future<ApiResponse> callBot(String message) async {
     return ApiResponse.fromJson(responseBody);
   } else {
     // Em caso de erro, lança uma exceção ou trata o erro
-    throw Exception('Falha ao chamar o bot: ${response.statusCode}');
+    return ApiResponse(
+        response: "Não consegui processar sua mensagem, tente novamente!");
   }
 }

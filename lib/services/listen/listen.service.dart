@@ -16,8 +16,11 @@ class ListenService {
         await _speechToText.initialize(onStatus: onStatus, onError: onError);
 
     await _speechToText.listen(
-      listenFor: const Duration(seconds: 6),
+      listenFor: const Duration(
+        seconds: 10,
+      ),
       onResult: onResult,
+      listenOptions: SpeechListenOptions(),
       localeId: "pt_BR",
     );
 
@@ -27,11 +30,6 @@ class ListenService {
   void cancelListening() async {
     await _speechToText.cancel();
   }
-
-  // Future<bool> init() async {
-  //   final enableToSpeech = await _speechToText.initialize(onStatus: onStatus);
-  //   return enableToSpeech;
-  // }
 
   void stopListening() async {
     await _speechToText.stop();

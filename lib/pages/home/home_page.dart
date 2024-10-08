@@ -14,6 +14,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final controller = Controller();
 
+  String getDisplayText() {
+    switch (controller.status) {
+      case "done":
+      case "initial":
+        return controller.enableToSpeech
+            ? "Toque no microfone para falar"
+            : "Fala indisponível, toque no microfone para ativar";
+      default:
+        return controller.isListening
+            ? "...Ouvindo"
+            : "Fala indisponível, toque no microfone para ativar";
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -42,7 +56,9 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     controller.isListening
                         ? "...Ouvindo"
-                        : controller.enableToSpeech
+                        : controller.enableToSpeech ||
+                                controller.status == "done" ||
+                                controller.status == "initial"
                             ? "Toque no microfone para falar"
                             : "Fala indisponível toque no microfone para ativar",
                     style: const TextStyle(fontSize: 20),

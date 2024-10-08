@@ -19,11 +19,13 @@ class ChatBuble extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: type == MessageTypeEnum.message
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.end,
         children: [
           Expanded(
             child: Text(
-              type == MessageTypeEnum.response ? message : "$message ?",
+              message,
               textAlign: TextAlign.left,
               style: const TextStyle(
                 fontSize: 16,
@@ -34,21 +36,18 @@ class ChatBuble extends StatelessWidget {
           const SizedBox(
             width: 12,
           ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  height: 48,
-                  width: 48, // Define a largura do botão
-                  child: AudioButton(
-                    message: message,
-                  ),
+          Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                height: 48,
+                width: 48, // Define a largura do botão
+                child: AudioButton(
+                  message: message,
                 ),
-              ],
-            ),
-          )
+              ),
+            ],
+          ),
         ],
       ),
     );

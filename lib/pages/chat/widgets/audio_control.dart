@@ -1,29 +1,42 @@
 import 'package:flutter/material.dart';
 
 class AudioControl extends StatefulWidget {
-  const AudioControl(
-      {super.key,
-      required this.isPaused,
-      required this.onPlay,
-      required this.onPause,
-      required this.status,
-      required this.onStart,
-      required this.onCancel});
+  AudioControl({
+    super.key,
+    required this.isPaused,
+    required this.onPlay,
+    required this.onPause,
+    required this.status,
+    required this.onStart,
+    required this.onCancel,
+    required this.sendMessage,
+  });
 
   final bool isPaused;
-  final String status;
+  String status; // Use String aqui
   final VoidCallback onPlay;
   final VoidCallback onPause;
   final VoidCallback onStart;
   final VoidCallback onCancel;
+  final VoidCallback sendMessage;
 
   @override
   State<AudioControl> createState() => _AudioControlState();
 }
 
 class _AudioControlState extends State<AudioControl> {
+  String previousStatus = '';
+
   @override
   Widget build(BuildContext context) {
+    if (widget.status == "done" && previousStatus != "done") {
+      print(widget.status);
+      widget.sendMessage();
+      previousStatus = "done"; // Atualiza o status anterior
+    } else if (widget.status != "done") {
+      previousStatus = ''; // Reseta quando o status não é "done"
+    }
+
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Row(
@@ -34,11 +47,9 @@ class _AudioControlState extends State<AudioControl> {
               ? _InitialButton(start: widget.onStart)
               : !widget.isPaused
                   ? _PauseButton(pause: widget.onPause)
-                  : _PlayButton(
-                      resume: widget.onPlay,
-                    ),
+                  : _PlayButton(resume: widget.onPlay),
           Text(widget.status),
-          _CancelButton(),
+          _CancelButton(onCancel: widget.onCancel),
         ],
       ),
     );
@@ -53,7 +64,7 @@ class _PauseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        pause(); // Chama a função de pausa passada
+        pause();
       },
       icon: const Icon(Icons.pause),
       style: IconButton.styleFrom(
@@ -66,11 +77,14 @@ class _PauseButton extends StatelessWidget {
 }
 
 class _CancelButton extends StatelessWidget {
+  final VoidCallback onCancel;
+  const _CancelButton({super.key, required this.onCancel});
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        Navigator.pop(context);
+        onCancel();
       },
       icon: const Icon(Icons.cancel),
       style: IconButton.styleFrom(

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class Controller extends ChangeNotifier {
   static Controller? _controller;
-  String text = '';
+  String text = 'dengue';
   bool isListening = false;
   bool isSpeaking = false;
   bool isLoading = false;
@@ -20,7 +20,7 @@ class Controller extends ChangeNotifier {
   List<MessageType> messageList = [];
 
   late ListenService _serviceListen;
-  final _serviceSpeak = SpeakService();
+  late SpeakService _serviceSpeak;
 
   Controller._() {
     enableToSpeech = true;
@@ -34,6 +34,9 @@ class Controller extends ChangeNotifier {
         notifyListeners();
       },
     );
+
+    _serviceSpeak = SpeakService(
+        onSpeechComplete: _onSpeechComplete, onSpeechStart: _onSpeechStart);
   }
 
   factory Controller() {
@@ -65,9 +68,9 @@ class Controller extends ChangeNotifier {
   }
 
   Future<ApiResponse> callApi(String text) async {
-    _status = "processing";
+    isLoading = true;
     ApiResponse data = await callBot(text);
-    _status = "speaking";
+    isLoading = false;
     _serviceSpeak.speak(data.response);
     return data;
   }
@@ -109,8 +112,22 @@ class Controller extends ChangeNotifier {
   //   initListener();
   // }
 
+  void _onSpeechComplete() {
+    isSpeaking = false;
+    notifyListeners();
+  }
+
+  void _onSpeechStart() {
+    isSpeaking = true;
+  }
+
+  void resetStatus() {
+    _status = "initial";
+    notifyListeners();
+  }
+
   void changeText(String newValue) {
-    text += newValue;
+    text = newValue;
     notifyListeners();
   }
 
@@ -122,5 +139,25 @@ class Controller extends ChangeNotifier {
   void addItem(MessageType item) {
     messageList.add(item);
     notifyListeners();
+  }
+
+  void sendMessage() async {
+    MessageType userMessage =
+        MessageType(message: text += "?", type: MessageTypeEnum.message);
+
+    addItem(userMessage);
+
+    final message = text;
+
+    print(message);
+    resetText();
+
+    final data = await callApi(message);
+    print("A data chegou aqui ${data.response}");
+
+    MessageType botMessage =
+        MessageType(message: data.response, type: MessageTypeEnum.response);
+
+    addItem(botMessage);
   }
 }

@@ -40,8 +40,8 @@ class _AudioPageState extends State<AudioPage> {
                     controller.isListening
                         ? const ActiveMic()
                         : controller.isSpeaking
-                            ? SpeakAnimation()
-                            : Text("Segure para iniciar"),
+                            ? const SpeakAnimation()
+                            : const Text("Segure para iniciar"),
                     const SizedBox(
                       height: 32,
                     ),
@@ -55,6 +55,7 @@ class _AudioPageState extends State<AudioPage> {
                 status: controller.status,
                 onStart: controller.startListening,
                 onCancel: controller.cancelListening,
+                sendMessage: controller.sendMessage,
               )
             ],
           );

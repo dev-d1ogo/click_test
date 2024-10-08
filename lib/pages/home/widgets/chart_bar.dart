@@ -1,5 +1,4 @@
 import 'package:click_teste2/controller/controller.dart';
-import 'package:click_teste2/functions/sendMessage.dart';
 import 'package:click_teste2/pages/chat/audio_page.dart';
 import 'package:click_teste2/types/message_type.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +26,6 @@ class _ChatBarState extends State<ChatBar> {
   @override
   void initState() {
     super.initState();
-    // Adicione um listener para atualizar o TextField quando o texto transcrito mudar
     widget.controller.addListener(() {
       setState(() {
         _inputController.text = widget.controller.text;
@@ -37,7 +35,6 @@ class _ChatBarState extends State<ChatBar> {
 
   @override
   Widget build(BuildContext context) {
-    print("Esse é o valor do texto");
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Padding(
@@ -74,7 +71,10 @@ class _ChatBarState extends State<ChatBar> {
                     onMessageAdded: widget.controller.addItem,
                     toggleStatus: toggleStatus,
                   )
-                : _AudioButton(resetListen: widget.controller.stopListening)
+                : _AudioButton(
+                    resetListen: widget.controller.stopListening,
+                    resetStatus: widget.controller.resetStatus,
+                  )
           ],
         ),
       ),
@@ -84,13 +84,16 @@ class _ChatBarState extends State<ChatBar> {
 
 class _AudioButton extends StatelessWidget {
   final void Function() resetListen;
+  final void Function() resetStatus;
 
-  const _AudioButton({super.key, required this.resetListen});
+  const _AudioButton(
+      {super.key, required this.resetListen, required this.resetStatus});
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
+        resetStatus();
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const AudioPage()));
       },
@@ -120,7 +123,7 @@ class _SendButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () async {
-        sendMessage(controller);
+        controller.sendMessage();
       },
       icon: const Icon(Icons.send),
       style: IconButton.styleFrom(
