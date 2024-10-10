@@ -1,3 +1,4 @@
+import 'package:click_teste2/controller/controller.dart';
 import 'package:flutter/material.dart';
 
 class AudioControl extends StatefulWidget {
@@ -10,11 +11,17 @@ class AudioControl extends StatefulWidget {
     required this.onStart,
     required this.onCancel,
     required this.sendMessage,
+    required this.recognizedText,
+    required this.onCancelSpeak,
+    required this.isSpeaking,
   });
 
+  final String recognizedText;
   final bool isPaused;
-  String status; // Use String aqui
+  final bool isSpeaking;
+  String status;
   final VoidCallback onPlay;
+  final VoidCallback onCancelSpeak;
   final VoidCallback onPause;
   final VoidCallback onStart;
   final VoidCallback onCancel;
@@ -27,14 +34,21 @@ class AudioControl extends StatefulWidget {
 class _AudioControlState extends State<AudioControl> {
   String previousStatus = '';
 
+  void toggleStatusToInitialStatus() {
+    widget.status = "initial";
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (widget.status == "done" && previousStatus != "done") {
-      print(widget.status);
+    bool isAvaibleToSendMessage = widget.status == "done" &&
+        previousStatus != "done" &&
+        widget.recognizedText != "";
+
+    if (isAvaibleToSendMessage) {
       widget.sendMessage();
-      previousStatus = "done"; // Atualiza o status anterior
+      previousStatus = "done";
     } else if (widget.status != "done") {
-      previousStatus = ''; // Reseta quando o status não é "done"
+      previousStatus = '';
     }
 
     return Padding(
@@ -43,11 +57,14 @@ class _AudioControlState extends State<AudioControl> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           (widget.status == 'initial' || widget.status == "done") &&
-                  !widget.isPaused
+                  !widget.isPaused &&
+                  !widget.isSpeaking
               ? _InitialButton(start: widget.onStart)
-              : !widget.isPaused
-                  ? _PauseButton(pause: widget.onPause)
-                  : _PlayButton(resume: widget.onPlay),
+              : widget.isSpeaking
+                  ? const _CancelSpeakingButton()
+                  : !widget.isPaused
+                      ? _PauseButton(pause: widget.onPause)
+                      : _PlayButton(resume: widget.onPlay),
           Text(widget.status),
           _CancelButton(onCancel: widget.onCancel),
         ],
@@ -68,7 +85,27 @@ class _PauseButton extends StatelessWidget {
       },
       icon: const Icon(Icons.pause),
       style: IconButton.styleFrom(
-        iconSize: 42,
+        iconSize: 32,
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+      ),
+    );
+  }
+}
+
+class _CancelSpeakingButton extends StatelessWidget {
+  const _CancelSpeakingButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Controller();
+    return IconButton(
+      onPressed: () async {
+        await controller.stopSpeak();
+      },
+      icon: const Icon(Icons.square),
+      style: IconButton.styleFrom(
+        iconSize: 32,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
@@ -84,11 +121,12 @@ class _CancelButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
+        Navigator.pop(context);
         onCancel();
       },
       icon: const Icon(Icons.cancel),
       style: IconButton.styleFrom(
-        iconSize: 42,
+        iconSize: 32,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
@@ -108,7 +146,7 @@ class _PlayButton extends StatelessWidget {
       },
       icon: const Icon(Icons.play_arrow),
       style: IconButton.styleFrom(
-        iconSize: 42,
+        iconSize: 32,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
@@ -128,7 +166,7 @@ class _InitialButton extends StatelessWidget {
       },
       icon: const Icon(Icons.mic),
       style: IconButton.styleFrom(
-        iconSize: 42,
+        iconSize: 32,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),

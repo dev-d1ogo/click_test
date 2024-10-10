@@ -10,19 +10,18 @@ class ListenService {
   ListenService({this.onStatus, this.onResult, this.onError});
 
   Future<bool> startListening(void Function(String)? onStatus) async {
-    await _speechToText.cancel();
-
     final enableToSpeech =
         await _speechToText.initialize(onStatus: onStatus, onError: onError);
 
-    await _speechToText.listen(
-      listenFor: const Duration(
-        seconds: 10,
-      ),
-      onResult: onResult,
-      listenOptions: SpeechListenOptions(),
-      localeId: "pt_BR",
-    );
+    if (enableToSpeech) {
+      await _speechToText.listen(
+        listenFor: const Duration(seconds: 60),
+        pauseFor: const Duration(seconds: 10),
+        onResult: onResult,
+        listenOptions: SpeechListenOptions(),
+        localeId: "pt-BR", // Usa o locale correto
+      );
+    }
 
     return enableToSpeech;
   }
@@ -31,7 +30,7 @@ class ListenService {
     await _speechToText.cancel();
   }
 
-  void stopListening() async {
+  stopListening() async {
     await _speechToText.stop();
   }
 }

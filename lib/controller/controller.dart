@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 
 class Controller extends ChangeNotifier {
   static Controller? _controller;
-  String text = 'dengue';
+  String text = '';
   bool isListening = false;
+  bool isRecording = true;
+  List<String> allRecognizedWords = [];
   bool isSpeaking = false;
   bool isLoading = false;
   bool enableToSpeech = false;
@@ -16,6 +18,9 @@ class Controller extends ChangeNotifier {
   String _status = "initial";
 
   get status => _status;
+
+  get isIdle =>
+      ["initial", "done"].contains(status) && !isSpeaking && !isLoading;
 
   List<MessageType> messageList = [];
 
@@ -75,9 +80,15 @@ class Controller extends ChangeNotifier {
     return data;
   }
 
-  onStatus(status) {
+  onStatus(status) async {
     isListening = status == "listening";
     _status = status;
+
+    if (isRecording && status == "notListening") {
+      debugPrint("status: should continue");
+      await _serviceListen.stopListening();
+      await _serviceListen.startListening(onStatus);
+    }
     notifyListeners();
   }
 
@@ -89,6 +100,7 @@ class Controller extends ChangeNotifier {
 
   stopSpeak() {
     isSpeaking = false;
+    _serviceSpeak.stop();
     notifyListeners();
   }
 
@@ -119,6 +131,8 @@ class Controller extends ChangeNotifier {
 
   void _onSpeechStart() {
     isSpeaking = true;
+
+    notifyListeners();
   }
 
   void resetStatus() {
@@ -141,7 +155,13 @@ class Controller extends ChangeNotifier {
     notifyListeners();
   }
 
+  void changeStatus(String newStatus) {
+    _status = newStatus;
+    notifyListeners();
+  }
+
   void sendMessage() async {
+    isLoading = true;
     MessageType userMessage =
         MessageType(message: text += "?", type: MessageTypeEnum.message);
 
@@ -153,7 +173,10 @@ class Controller extends ChangeNotifier {
     resetText();
 
     final data = await callApi(message);
+
     print("A data chegou aqui ${data.response}");
+
+    isLoading = false;
 
     MessageType botMessage =
         MessageType(message: data.response, type: MessageTypeEnum.response);

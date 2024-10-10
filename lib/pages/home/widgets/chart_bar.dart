@@ -51,6 +51,7 @@ class _ChatBarState extends State<ChatBar> {
                 onChanged: (value) {
                   widget.controller.changeText(_inputController.text);
                 },
+                autofocus: false,
                 decoration: const InputDecoration(
                   hintText: "Digite sua dúvida",
                   border: OutlineInputBorder(

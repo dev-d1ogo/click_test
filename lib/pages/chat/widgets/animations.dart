@@ -39,3 +39,16 @@ class SpeakAnimation extends StatelessWidget {
         animate: true);
   }
 }
+
+class ListenAnimation extends StatelessWidget {
+  const ListenAnimation({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Lottie.network(
+        'https://lottie.host/6db840ec-574b-4c50-85f9-ff4d0927a0a9/wwHvKjmBJi.json',
+        height: 150,
+        width: 150,
+        animate: true);
+  }
+}

@@ -13,13 +13,34 @@ class AudioPage extends StatefulWidget {
 
 class _AudioPageState extends State<AudioPage> {
   final controller = Controller();
+  bool isLongPressTalk = false;
 
   @override
   void initState() {
     super.initState();
   }
 
-  @override
+  Widget _buildStateWidget() {
+    if (controller.isLoading) {
+      return const Loading();
+    } else if (controller.isListening && !isLongPressTalk) {
+      return const ActiveMic();
+    } else if (controller.isSpeaking) {
+      return const SpeakAnimation();
+    } else if (isLongPressTalk) {
+      return ListenAnimation();
+    } else {
+      return PressToTalkButton(startListening: controller.startListening);
+      ;
+    }
+  }
+
+  toggleLongPressState() {
+    setState(() {
+      isLongPressTalk = !isLongPressTalk;
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -33,15 +54,24 @@ class _AudioPageState extends State<AudioPage> {
         builder: (context, child) {
           return Column(
             children: [
+              Text(controller.text),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    controller.isListening
-                        ? const ActiveMic()
-                        : controller.isSpeaking
-                            ? const SpeakAnimation()
-                            : const Text("Segure para iniciar"),
+                    GestureDetector(
+                      onLongPress: controller.isIdle
+                          ? () {
+                              toggleLongPressState();
+                              controller.startListening();
+                            }
+                          : null,
+                      onLongPressEnd: (details) {
+                        controller.stopListening();
+                        toggleLongPressState();
+                      },
+                      child: _buildStateWidget(),
+                    ),
                     const SizedBox(
                       height: 32,
                     ),
@@ -56,7 +86,10 @@ class _AudioPageState extends State<AudioPage> {
                 onStart: controller.startListening,
                 onCancel: controller.cancelListening,
                 sendMessage: controller.sendMessage,
-              )
+                recognizedText: controller.text,
+                onCancelSpeak: controller.stopSpeak,
+                isSpeaking: controller.isSpeaking,
+              ),
             ],
           );
         },
@@ -67,6 +100,7 @@ class _AudioPageState extends State<AudioPage> {
 
 class PressToTalkButton extends StatelessWidget {
   final VoidCallback startListening;
+
   const PressToTalkButton({
     super.key,
     required this.startListening,
@@ -74,16 +108,39 @@ class PressToTalkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(
-              0), // Ajuste de padding para um botão circular
-          backgroundColor: Colors.white54, // Cor de fundo do botão
-        ),
-        onPressed: () {
-          startListening();
-        },
-        child: const Icon(Icons.phone));
+    return GestureDetector(
+      onTap: startListening,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // O efeito de sombra maior
+          Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.purple[200]!
+                  .withOpacity(0.4), // Cor mais clara para o efeito externo
+            ),
+          ),
+          // O círculo interno
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.purple[800]!
+                  .withOpacity(0.5), // Cor mais escura para o efeito interno
+            ),
+          ),
+          // Ícone ou conteúdo dentro do círculo
+          const Icon(
+            Icons.mic, // O ícone do microfone
+            color: Colors.white,
+            size: 50,
+          ),
+        ],
+      ),
+    );
   }
 }
