@@ -37,11 +37,13 @@ class _AudioPageState extends State<AudioPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    controller.isListening
-                        ? const ActiveMic()
-                        : controller.isSpeaking
-                            ? const SpeakAnimation()
-                            : const Text("Segure para iniciar"),
+                    controller.isLoading
+                        ? const Loading()
+                        : controller.isListening
+                            ? const ActiveMic()
+                            : controller.isSpeaking
+                                ? const SpeakAnimation()
+                                : const Text("Segure para iniciar"),
                     const SizedBox(
                       height: 32,
                     ),
@@ -56,7 +58,10 @@ class _AudioPageState extends State<AudioPage> {
                 onStart: controller.startListening,
                 onCancel: controller.cancelListening,
                 sendMessage: controller.sendMessage,
-              )
+                recognizedText: controller.text,
+                onCancelSpeak: controller.stopSpeak,
+                isSpeaking: controller.isSpeaking,
+              ),
             ],
           );
         },

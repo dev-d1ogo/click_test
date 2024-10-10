@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class Controller extends ChangeNotifier {
   static Controller? _controller;
-  String text = 'dengue';
+  String text = '';
   bool isListening = false;
   bool isSpeaking = false;
   bool isLoading = false;
@@ -89,6 +89,7 @@ class Controller extends ChangeNotifier {
 
   stopSpeak() {
     isSpeaking = false;
+    _serviceSpeak.stop();
     notifyListeners();
   }
 
@@ -119,6 +120,8 @@ class Controller extends ChangeNotifier {
 
   void _onSpeechStart() {
     isSpeaking = true;
+
+    notifyListeners();
   }
 
   void resetStatus() {
@@ -141,7 +144,13 @@ class Controller extends ChangeNotifier {
     notifyListeners();
   }
 
+  void changeStatus(String newStatus) {
+    _status = newStatus;
+    notifyListeners();
+  }
+
   void sendMessage() async {
+    isLoading = true;
     MessageType userMessage =
         MessageType(message: text += "?", type: MessageTypeEnum.message);
 
@@ -154,6 +163,8 @@ class Controller extends ChangeNotifier {
 
     final data = await callApi(message);
     print("A data chegou aqui ${data.response}");
+
+    isLoading = false;
 
     MessageType botMessage =
         MessageType(message: data.response, type: MessageTypeEnum.response);
