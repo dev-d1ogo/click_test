@@ -59,6 +59,7 @@ class _AudioPageState extends State<AudioPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+<<<<<<< HEAD
                     GestureDetector(
                       onLongPress: controller.isIdle
                           ? () {
@@ -72,6 +73,15 @@ class _AudioPageState extends State<AudioPage> {
                       },
                       child: _buildStateWidget(),
                     ),
+=======
+                    controller.isLoading
+                        ? const Loading()
+                        : controller.isListening
+                            ? const ActiveMic()
+                            : controller.isSpeaking
+                                ? const SpeakAnimation()
+                                : const Text("Segure para iniciar"),
+>>>>>>> 6eb6727c20523f83a0446a00d5f69795eb195076
                     const SizedBox(
                       height: 32,
                     ),
