@@ -72,6 +72,11 @@ class Controller extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleLoadingStatus(bool newStatus) {
+    isLoading = newStatus;
+    notifyListeners();
+  }
+
   Future<ApiResponse> callApi(String text) async {
     isLoading = true;
     ApiResponse data = await callBot(text);
@@ -84,11 +89,23 @@ class Controller extends ChangeNotifier {
     isListening = status == "listening";
     _status = status;
 
-    if (isRecording && status == "notListening") {
-      debugPrint("status: should continue");
-      await _serviceListen.stopListening();
-      await _serviceListen.startListening(onStatus);
-    }
+    // if (isRecording && status == "notListening") {
+    //   debugPrint("status: should continue");
+    //   await _serviceListen.stopListening();
+    //   await _serviceListen.startListening(onStatus);
+    // }
+    notifyListeners();
+  }
+
+  onStatusLoop(status) async {
+    isListening = status == "listening";
+    _status = status;
+
+    // if (isRecording && status == "notListening") {
+    //   debugPrint("status: should continue");
+    //   await _serviceListen.stopListening();
+    //   await _serviceListen.startListening(onStatusLoop);
+    // }
     notifyListeners();
   }
 
@@ -111,7 +128,15 @@ class Controller extends ChangeNotifier {
     notifyListeners();
   }
 
+  void startListeningWithLoop() async {
+    isPaused = false;
+
+    enableToSpeech = await _serviceListen.startListening(onStatusLoop);
+    notifyListeners();
+  }
+
   void stopListening() {
+    _status = 'done';
     _serviceListen.stopListening();
     notifyListeners();
   }

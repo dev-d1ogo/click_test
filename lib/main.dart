@@ -11,6 +11,8 @@ void main() => runApp(
       ),
     );
 
+final RouteObserver routeObserver = RouteObserver();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -20,6 +22,7 @@ class MyApp extends StatelessWidget {
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
       home: const HomePage(),
+      navigatorObservers: [routeObserver],
       routes: {
         HomePage.routeName: (context) => const HomePage(),
         AudioPage.routeName: (context) => const AudioPage()

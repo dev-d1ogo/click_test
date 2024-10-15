@@ -21,8 +21,6 @@ class Loading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Lottie.network(
         'https://lottie.host/947a83f0-f969-4d76-b03a-b71b86348cce/uINORyGRUG.json',
-        height: 150,
-        width: 150,
         animate: true);
   }
 }

@@ -53,7 +53,6 @@ class _HomePageState extends State<HomePage> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text(controller.isLoading.toString()),
                   Text(
                     controller.isListening
                         ? "...Ouvindo"

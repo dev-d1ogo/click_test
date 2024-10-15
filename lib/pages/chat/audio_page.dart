@@ -28,7 +28,7 @@ class _AudioPageState extends State<AudioPage> {
     } else if (controller.isSpeaking) {
       return const SpeakAnimation();
     } else if (isLongPressTalk) {
-      return ListenAnimation();
+      return const ListenAnimation();
     } else {
       return PressToTalkButton(startListening: controller.startListening);
       ;
@@ -54,17 +54,16 @@ class _AudioPageState extends State<AudioPage> {
         builder: (context, child) {
           return Column(
             children: [
-              Text(controller.text),
+              Text(controller.isLoading.toString()),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-<<<<<<< HEAD
                     GestureDetector(
                       onLongPress: controller.isIdle
                           ? () {
                               toggleLongPressState();
-                              controller.startListening();
+                              controller.startListeningWithLoop();
                             }
                           : null,
                       onLongPressEnd: (details) {
@@ -73,15 +72,6 @@ class _AudioPageState extends State<AudioPage> {
                       },
                       child: _buildStateWidget(),
                     ),
-=======
-                    controller.isLoading
-                        ? const Loading()
-                        : controller.isListening
-                            ? const ActiveMic()
-                            : controller.isSpeaking
-                                ? const SpeakAnimation()
-                                : const Text("Segure para iniciar"),
->>>>>>> 6eb6727c20523f83a0446a00d5f69795eb195076
                     const SizedBox(
                       height: 32,
                     ),
@@ -99,6 +89,7 @@ class _AudioPageState extends State<AudioPage> {
                 recognizedText: controller.text,
                 onCancelSpeak: controller.stopSpeak,
                 isSpeaking: controller.isSpeaking,
+                toggleLoadingStatus: controller.toggleLoadingStatus,
               ),
             ],
           );

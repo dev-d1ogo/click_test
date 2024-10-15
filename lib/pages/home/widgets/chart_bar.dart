@@ -27,9 +27,12 @@ class _ChatBarState extends State<ChatBar> {
   void initState() {
     super.initState();
     widget.controller.addListener(() {
-      setState(() {
-        _inputController.text = widget.controller.text;
-      });
+      bool enableToChangeInput = !Navigator.of(context).canPop();
+      if (enableToChangeInput) {
+        setState(() {
+          _inputController.text = widget.controller.text;
+        });
+      }
     });
   }
 

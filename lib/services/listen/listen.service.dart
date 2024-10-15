@@ -13,15 +13,14 @@ class ListenService {
     final enableToSpeech =
         await _speechToText.initialize(onStatus: onStatus, onError: onError);
 
-    if (enableToSpeech) {
-      await _speechToText.listen(
-        listenFor: const Duration(seconds: 60),
-        pauseFor: const Duration(seconds: 10),
-        onResult: onResult,
-        listenOptions: SpeechListenOptions(),
-        localeId: "pt-BR", // Usa o locale correto
-      );
-    }
+    await _speechToText.listen(
+      listenFor: const Duration(seconds: 60),
+      pauseFor: const Duration(seconds: 10),
+      onResult: onResult,
+      listenOptions: SpeechListenOptions(),
+      localeId: "pt-BR",
+      onSoundLevelChange: (level) => print(level),
+    );
 
     return enableToSpeech;
   }
