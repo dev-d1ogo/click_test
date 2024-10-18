@@ -1,4 +1,5 @@
 import 'package:click_teste2/controller/controller.dart';
+import 'package:click_teste2/pages/chat/widgets/animations.dart';
 import 'package:click_teste2/pages/home/widgets/chat_page.dart';
 import 'package:flutter/material.dart';
 
@@ -72,7 +73,6 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: ChatPage(
                       messageList: controller.messageList,
-                      onMessageAdded: controller.addItem,
                     ),
                   ),
                   ChatBar(

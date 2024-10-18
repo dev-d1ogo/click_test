@@ -41,7 +41,7 @@ class _ChatBarState extends State<ChatBar> {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -66,7 +66,7 @@ class _ChatBarState extends State<ChatBar> {
               ),
             ),
             const SizedBox(
-              width: 12,
+              width: 10,
             ),
             _StartButton(widget: widget),
             _inputController.text.isNotEmpty && widget.controller.text != ""

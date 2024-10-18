@@ -50,3 +50,16 @@ class ListenAnimation extends StatelessWidget {
         animate: true);
   }
 }
+
+class ThreeDots extends StatelessWidget {
+  const ThreeDots({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Lottie.network(
+        'https://lottie.host/4d2e8b7b-719b-4960-986f-b457b936ac9c/J6fxo5vc6v.json',
+        height: 64,
+        width: 64,
+        animate: true);
+  }
+}

@@ -20,7 +20,7 @@ class AudioControl extends StatefulWidget {
   final String recognizedText;
   final bool isPaused;
   final bool isSpeaking;
-  String status;
+  final String status;
   final VoidCallback onPlay;
   final VoidCallback onCancelSpeak;
   final VoidCallback onPause;
@@ -38,12 +38,8 @@ class _AudioControlState extends State<AudioControl> {
   bool isLoadingBot = false;
 
   Future<void> handleSendMessage() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     widget.sendMessage();
-  }
-
-  void toggleStatusToInitialStatus() {
-    widget.status = "initial";
   }
 
   @override

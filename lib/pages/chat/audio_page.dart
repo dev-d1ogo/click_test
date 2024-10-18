@@ -21,17 +21,18 @@ class _AudioPageState extends State<AudioPage> {
   }
 
   Widget _buildStateWidget() {
-    if (controller.isLoading) {
-      return const Loading();
-    } else if (controller.isListening && !isLongPressTalk) {
-      return const ActiveMic();
-    } else if (controller.isSpeaking) {
-      return const SpeakAnimation();
-    } else if (isLongPressTalk) {
-      return const ListenAnimation();
-    } else {
-      return PressToTalkButton(startListening: controller.startListening);
-      ;
+    switch (controller.state) {
+      case PageStates.listening:
+        return isLongPressTalk ? const ListenAnimation() : const ActiveMic();
+      case PageStates.loading:
+        return const Loading();
+      case PageStates.speaking:
+        return const SpeakAnimation();
+      case PageStates.initial:
+      case PageStates.done:
+      case PageStates.idle:
+      default:
+        return PressToTalkButton(startListening: controller.startListening);
     }
   }
 
@@ -63,11 +64,11 @@ class _AudioPageState extends State<AudioPage> {
                       onLongPress: controller.isIdle
                           ? () {
                               toggleLongPressState();
-                              controller.startListeningWithLoop();
+                              controller.startListening();
                             }
                           : null,
-                      onLongPressEnd: (details) {
-                        controller.stopListening();
+                      onLongPressEnd: (details) async {
+                        await controller.stopListening();
                         toggleLongPressState();
                       },
                       child: _buildStateWidget(),
